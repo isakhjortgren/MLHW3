@@ -139,8 +139,8 @@ function res = grad(model, data, wd_coefficient)
 
     
     tmp1 = dEdzk' * model.hid_to_class;
-    logisticDerivative = exp(-hid_input)./((1+exp(-hid_input)).^2);
-    tmp2 = tmp1'.*logisticDerivative;
+    logLogisticDerivative = -hid_input -2*log(1+exp(-hid_input));
+    tmp2 = tmp1'.*exp(logLogisticDerivative);
     Error_derivative_in = -tmp2*data.inputs'/N;
     
     res.input_to_hid = Error_derivative_in + wd_coefficient * model.input_to_hid;
