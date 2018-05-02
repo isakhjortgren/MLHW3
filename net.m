@@ -132,20 +132,19 @@ function res = grad(model, data, wd_coefficient)
   
   %% TODO - Write code here ---------------
 
-    % Right now the function just returns a lot of zeros. Your job is to change that.
     N = size(data.inputs,2);
-    WD_to_hid = wd_coefficient * model.input_to_hid;
-    WD_to_out = wd_coefficient * model.hid_to_class;
-    tmpExpOut = exp(-class_input);
-    dEdzk = data.targets.*(1-tmpExpOut./sum(tmpExpOut,1));
+
+    dEdzk = data.targets-class_prob;
     Error_derivative_out = -dEdzk*hid_output'/N;
+
     
     tmp1 = dEdzk' * model.hid_to_class;
-    tmp2 = tmp1'.*hid_output;
+    logisticDerivative = exp(-hid_input)./((1+exp(-hid_input)).^2);
+    tmp2 = tmp1'.*logisticDerivative;
     Error_derivative_in = -tmp2*data.inputs'/N;
     
-    res.input_to_hid = Error_derivative_in + WD_to_hid;
-    res.hid_to_class = Error_derivative_out + WD_to_out;
+    res.input_to_hid = Error_derivative_in + wd_coefficient * model.input_to_hid;
+    res.hid_to_class = Error_derivative_out + wd_coefficient * model.hid_to_class;
   % ---------------------------------------
 end
 
